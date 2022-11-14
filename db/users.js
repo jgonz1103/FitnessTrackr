@@ -1,7 +1,7 @@
 const client = require("./client");
 
 // database functions
-
+// commentHere
 // user functions
 async function createUser({ username, password }) {
     try {
