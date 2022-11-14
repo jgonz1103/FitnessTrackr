@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 // require in the database adapter functions as you write them (createUser, createActivity...)
 const {pool, createUser, getUserById, getUser, getUserByUsername} = require('./');
 const client = require("./client")
@@ -24,9 +25,39 @@ async function createTables() {
    CREATE TABLE users (
      id SERIAL PRIMARY KEY,
      username VARCHAR(255) UNIQUE NOT NULL,
-     password VARCHAR(255) NOT NULL
+     password VARCHAR(255) NOT NULL,
+     ACTIVE BOOLEAN DEFAULT true
    ); 
-   `)
+   `);
+
+    await client.query(`
+    CREATE TABLE activities (
+      id SERIAL PRIMARY KEY,
+
+    )
+    `);
+
+    await client.query(`
+    CREATE TABLE rountines (
+      id SERIAL PRIMARY KEY,
+          "creatorId" INTEGER REFERENCES users(id) NOT NULL,
+          name VARCHAR(255) NOT NULL,
+          description VARCHAR(255) NOT NULL,
+          goal VARCHAR(255) NOT NULL,
+          active BOOLEAN DEFAULT TRUE
+
+    )
+    `);
+
+    await client.query(`
+    CREATE TABLE routineActivities (
+      id SERIAL PRIMARY KEY,
+      "activitiesId" INTEGER REFERENCES activities(id), 
+      "routineId" INTEGER REFERENCES routine(id),
+      UNIQUE ("activitiesId", "routineId")
+    )
+    `);
+
      console.log("Finished building tables...")
 
  } catch (error) {
