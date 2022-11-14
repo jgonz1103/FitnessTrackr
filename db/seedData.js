@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-catch */
 // require in the database adapter functions as you write them (createUser, createActivity...)
-const {pool, createUser, getUserById, getUser, getUserByUsername} = require('./');
+const {pool, createUser, getUserById, getUser, getUserByUsername, createActivity} = require('./');
 const client = require("./client")
 
 async function dropTables() {
