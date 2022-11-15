@@ -24,12 +24,10 @@ async function getActivityById(id) {
       SELECT * FROM posts
       WHERE id=$1;
     `, [activityId]);
-
     return activity;
   } catch (error) {
     throw error;
   }
-  
 }
 
 async function getActivityByName(name) {
@@ -78,18 +76,21 @@ async function attachActivitiesToRoutines(routines) {
 }
 
 // return the new activity
-async function createActivity({ name, description }) {
-  try{
-      const {rows: createActivity } = await client.query(`
-        Id SERIAL PRIMARY KEY
-        name VARCHAR(255) UNIQUE NOT NULL
-        description TEXT NOT NULL
-        `);
-      return createActivity;
-  } catch (error) {
-    throw error;
+async function createActivity({ 
+    name, 
+    description 
+  }) {
+    try{
+        const {rows: createActivity } = await client.query(`
+          Id SERIAL PRIMARY KEY
+          name VARCHAR(255) UNIQUE NOT NULL
+          description TEXT NOT NULL
+          `, [ name, description]);
+        return createActivity;
+    } catch (error) {
+      throw error;
+    }
   }
-}
 
 // don't try to update the id
 // do update the name and description
