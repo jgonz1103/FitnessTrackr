@@ -35,14 +35,14 @@ async function getAllRoutines() {
 
 async function getAllRoutinesByUser({username}) {
   try{
-    const { rows: postIds } = await client.query(`
+    const { rows: routineIds } = await client.query(`
         SELECT * FROM routines 
         WHERE author=${username};
     `)
-    const posts = await Promise.all(postIds.map(
-        post => getRoutineById( post.id )
+    const routine = await Promise.all(routineIds.map(
+        routine => getRoutineById( routine.id )
     ))
-    return posts
+    return routine
   }
   catch(error){
     throw error

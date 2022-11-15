@@ -26,9 +26,9 @@ describe("DB Users", () => {
       };
 
       const user = await createUser(fakeUserData);
-
+     
       const queriedUser = await getUserById(user.id);
-
+  
       expect(user.username).toBe(fakeUserData.username);
       expect(queriedUser.username).toBe(fakeUserData.username);
     });
@@ -65,13 +65,15 @@ describe("DB Users", () => {
       expect(hashedVersion).toBe(true);
     });
 
-    it("Does NOT return the password", async () => {
+    it.only("Does NOT return the password", async () => {
       const fakeUserData = {
         username: faker.internet.userName(),
         password: faker.internet.password(),
       };
       const user = await createUser(fakeUserData);
+      console.log('hello its me',user)
       expect(user.password).toBeFalsy();
+      console.log('peepoopee', user.password)
     });
 
   });

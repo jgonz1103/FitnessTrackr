@@ -23,8 +23,7 @@ async function createTables() {
    CREATE TABLE users (
      id SERIAL PRIMARY KEY,
      username VARCHAR(255) UNIQUE NOT NULL,
-     password VARCHAR(255) NOT NULL,
-     ACTIVE BOOLEAN DEFAULT true
+     password VARCHAR(255) NOT NULL
    ); 
    `);
 
@@ -235,7 +234,7 @@ async function rebuildDB() {
     await createInitialUsers()
     await createInitialActivities()
     await createInitialRoutines()
-    await createInitialRoutineActivities()
+    // await createInitialRoutineActivities()
   } catch (error) {
     console.log("ERROR during rebuildDB")
     throw error

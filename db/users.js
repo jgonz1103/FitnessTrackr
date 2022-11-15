@@ -6,14 +6,14 @@ const client = require("./client");
 // user functions
 async function createUser({ username, password }) {
     try {
+      // console.log(password, 'hello this is me');
       const {rows: [user]} = await client.query(`
       INSERT INTO users(username, password)
       VALUES ($1, $2)
       ON CONFLICT (username) DO NOTHING
       RETURNING *;
       `, [username, password]);
-    
-      return user
+      return user;
     } catch (error) {
       throw error;
     }
@@ -26,10 +26,12 @@ async function getUser({ username, password }) {
     const {rows: [user]} = await client.query(`
     SELECT id 
     FROM users
-    VALUES($1, $2)
+    WHERE username=$1,
+    password=$2
     ON CONFLICT (user) DO NOTHING
     RETURNING *;
     `, [username, password]);
+    console.log(password, 'peepeepoopoo')
     return user;
    } catch (error) {
     throw error;
@@ -44,12 +46,13 @@ async function getUser({ username, password }) {
 
 async function getUserById(userId) {
 try {
+  // console.log(userId, 'hello again')
   const {rows: [user]} = await client.query(`
-  SELECT id, username, name FROM users
+  SELECT id, username FROM users
   WHERE id =${userId}
   `);
   
-
+// console.log(user,'usersss')
   return user;
 }
 catch (error) {
