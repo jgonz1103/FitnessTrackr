@@ -19,7 +19,7 @@ describe("DB Users", () => {
 
   describe("createUser({ username, password })", () => {
 
-    it("Creates the user", async () => {
+    it.only("Creates the user", async () => {
       const fakeUserData = {
         username: "Horace",
         password: faker.internet.password(),
@@ -73,7 +73,7 @@ describe("DB Users", () => {
       const user = await createUser(fakeUserData);
       console.log('hello its me',user)
       expect(user.password).toBeFalsy();
-      console.log('peepoopee', user.password)
+      console.log('hello me 2', user.password)
     });
 
   });
