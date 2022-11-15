@@ -9,7 +9,7 @@ async function getAllActivities() {
     `)
 
     const activities = await Promise.all(activityIds.map(
-        activity => getPostById( activity.id )
+        activity => getActivityById( activity.id )
     ));
     return activities
   } 
@@ -21,7 +21,7 @@ async function getAllActivities() {
 async function getActivityById(id) {
   try {
     const { rows: [ activity ]  } = await client.query(`
-      SELECT * FROM posts
+      SELECT * FROM activities
       WHERE id=$1;
     `, [activityId]);
     return activity;
@@ -38,7 +38,7 @@ async function getActivityByName(name) {
     `, [name]);
 
     return await Promise.all(activityIds.map(
-      activity => getPostById(activity.id)
+      activity => getActivityById(activity.id)
     ));
   } catch (error) {
     throw error;
@@ -82,10 +82,11 @@ async function createActivity({
   }) {
     try{
         const {rows: createActivity } = await client.query(`
-          Id SERIAL PRIMARY KEY
-          name VARCHAR(255) UNIQUE NOT NULL
-          description TEXT NOT NULL
-          `, [ name, description]);
+        INSERT INTO activities( name, description) 
+        VALUES ($1, $2)
+        ON CONFLICT (id) DO NOTHING
+        RETURNING *;
+          `, [name, description]);
         return createActivity;
     } catch (error) {
       throw error;
@@ -95,8 +96,41 @@ async function createActivity({
 // don't try to update the id
 // do update the name and description
 // return the updated activity
-async function updateActivity({ id, ...fields }) {
+async function updateActivity({...fields }) {
 
+    const setString = Object.keys(fields).map(
+        (key, index) => `"${ key }"=$${ index + 1 }`
+    ).join(', ');
+
+    try{
+
+    // if (setString.length === 0) {
+    //     return;
+    // }
+
+    if (setString.length > 0) {
+        await client.query(`
+          UPDATE activities
+          SET ${ setString }
+          RETURNING *;
+        `, Object.values(fields));
+        
+    const { rows: [ activity ] } = await client.query(`
+            UPDATE activities
+            SET ${ setString }
+            RETURNING *;
+            `, Object.values(fields));
+
+        return {rows: [ activity ]};
+    }
+
+    return await getActivityById(activityId);
+
+    }
+    
+    catch(error){
+        throw error
+    }
 }
 
 
