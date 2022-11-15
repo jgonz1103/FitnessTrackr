@@ -1,15 +1,14 @@
 /* eslint-disable no-useless-catch */
 // require in the database adapter functions as you write them (createUser, createActivity...)
-const {pool, createUser, getUserById, getUser, getUserByUsername} = require('./');
+const {pool, createUser, getUserById, getUser, getUserByUsername, createActivity, createRoutine} = require('./');
 const client = require("./client")
 
 async function dropTables() {
-  console.log("Dropping All Tables...")
   try {
     console.log("Dropping All Tables...")
-   await client.query(`DROP TABLE IF EXISTS routineActivities`)
-   await client.query(`DROP TABLE IF EXISTS activities`)
+   await client.query(`DROP TABLE IF EXISTS routineActivities;`)
    await client.query(`DROP TABLE IF EXISTS routines;`)
+   await client.query(`DROP TABLE IF EXISTS activities;`)
    await client.query(`DROP TABLE IF EXISTS users;`)
  } catch (error) {
    throw error;
@@ -17,7 +16,6 @@ async function dropTables() {
 }
 
 async function createTables() {
-  console.log("Starting to build tables...")
   try {
     console.log("Starting to build tables...")
 
@@ -33,29 +31,29 @@ async function createTables() {
     await client.query(`
     CREATE TABLE activities (
       id SERIAL PRIMARY KEY,
-
-    )
+      name VARCHAR(255) UNIQUE NOT NULL,
+      description TEXT NOT NULL
+    );
     `);
 
     await client.query(`
-    CREATE TABLE rountines (
+    CREATE TABLE routines (
       id SERIAL PRIMARY KEY,
-          "creatorId" INTEGER REFERENCES users(id) NOT NULL,
-          name VARCHAR(255) NOT NULL,
-          description VARCHAR(255) NOT NULL,
-          goal VARCHAR(255) NOT NULL,
-          active BOOLEAN DEFAULT TRUE
-
-    )
+      "creatorId" INTEGER REFERENCES users(id) NOT NULL,
+      name VARCHAR(255) UNIQUE NOT NULL,
+      goal VARCHAR(255) NOT NULL,
+      "isPublic" BOOLEAN DEFAULT TRUE,
+      active BOOLEAN DEFAULT TRUE
+    );
     `);
 
     await client.query(`
     CREATE TABLE routineActivities (
       id SERIAL PRIMARY KEY,
       "activitiesId" INTEGER REFERENCES activities(id), 
-      "routineId" INTEGER REFERENCES routine(id),
+      "routineId" INTEGER REFERENCES routines(id),
       UNIQUE ("activitiesId", "routineId")
-    )
+    );
     `);
 
      console.log("Finished building tables...")
@@ -85,7 +83,7 @@ async function createInitialUsers() {
     console.log(users)
     console.log("Finished creating users!")
   } catch (error) {
-    console.error("Error creating users!")
+    console.error("ERROR creating users!")
     throw error
   }
 }
@@ -119,7 +117,7 @@ async function createInitialActivities() {
 
     console.log("Finished creating activities!")
   } catch (error) {
-    console.error("Error creating activities!")
+    console.error("ERROR creating activities!")
     throw error
   }
 }
@@ -239,7 +237,7 @@ async function rebuildDB() {
     await createInitialRoutines()
     await createInitialRoutineActivities()
   } catch (error) {
-    console.log("Error during rebuildDB")
+    console.log("ERROR during rebuildDB")
     throw error
   }
 }
