@@ -19,11 +19,11 @@ async function getAllActivities() {
 
 async function getActivityById(id) {
   try {
+    console.log(id)
     const { rows: [ activity ]  } = await client.query(`
       SELECT * FROM activities
       WHERE id=$1;
     `, [id]);
-    console.log(id)
     if(id !== undefined){
       return activity;
     }
@@ -83,7 +83,7 @@ async function createActivity({
     description 
   }) {
     try{
-        const {rows: createActivity } = await client.query(`
+        const {rows: [createActivity] } = await client.query(`
         INSERT INTO activities( name, description) 
         VALUES ($1, $2)
         ON CONFLICT (id) DO NOTHING

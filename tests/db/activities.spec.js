@@ -30,7 +30,7 @@ describe("DB Activities", () => {
   describe("getActivityById", () => {
     it("gets activities by their id", async () => {
       const fakeActivity = await createFakeActivity("Crunches", "Do 40 reps");
-
+      console.log('fake activity', fakeActivity)
       const activity = await getActivityById(fakeActivity.id);
 
       expect(activity.id).toEqual(fakeActivity.id);
