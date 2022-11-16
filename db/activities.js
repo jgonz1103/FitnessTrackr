@@ -34,14 +34,15 @@ async function getActivityById(id) {
 
 async function getActivityByName(name) {
   try {
-    const { rows: activityIds } = await client.query(`
-      SELECT activities.id
+    const { rows: activityName } = await client.query(`
+      SELECT *
       FROM activities
+      WHERE name=$1;
     `, [name]);
+    console.log(name, "M")
 
-    return await Promise.all(activityIds.map(
-      activity => getActivityById(activity.id)
-    ));
+    return
+
   } catch (error) {
     throw error;
   }
@@ -110,13 +111,7 @@ async function updateActivity({...fields }) {
     //     return;
     // }
 
-    if (setString.length > 0) {
-        await client.query(`
-          UPDATE activities
-          SET ${ setString }
-          RETURNING *;
-        `, Object.values(fields));
-        
+    if (setString.length > 0) {      
     const { rows: [ activity ] } = await client.query(`
             UPDATE activities
             SET ${ setString }
