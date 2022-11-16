@@ -29,8 +29,7 @@ async function getUser({ username, password }) {
     const {rows: [user]} = await client.query(`
     SELECT id 
     FROM users
-    WHERE username=$1,
-    password=$2
+    WHERE username=$1, password=$2
     ON CONFLICT (user) DO NOTHING
     RETURNING *;
     `, [username, password]);
@@ -50,7 +49,8 @@ async function getUserById(userId) {
 try {
   // console.log(userId, 'hello again')
   const {rows: [user]} = await client.query(`
-  SELECT id, username FROM users
+  SELECT id, username 
+  FROM users
   WHERE id =${userId}
   `);
   
