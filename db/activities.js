@@ -6,8 +6,7 @@ async function getAllActivities() {
   try {
     const { rows: activityIds } = await client.query(`
     SELECT id FROM activities;
-    `)
-
+    `,[])
     const activities = await Promise.all(activityIds.map(
         activity => getActivityById( activity.id )
     ));
@@ -23,8 +22,11 @@ async function getActivityById(id) {
     const { rows: [ activity ]  } = await client.query(`
       SELECT * FROM activities
       WHERE id=$1;
-    `, [activityId]);
-    return activity;
+    `, [id]);
+    console.log(id)
+    if(id !== undefined){
+      return activity;
+    }
   } catch (error) {
     throw error;
   }

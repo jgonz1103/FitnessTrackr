@@ -25,16 +25,11 @@ async function createUser({ username, password })
 
 async function getUser({ username, password }) {
    try {
-    console.log(getUser)
-    const {rows: [user]} = await client.query(`
-    SELECT id 
-    FROM users
-    WHERE username=$1 password=$2
-    ON CONFLICT (user) DO NOTHING
-    RETURNING *;
-    `, [username, password]);
-    delete user.password
-    return user;
+    const user = await getUserByUsername(username)
+    if(user.password === password){
+      delete user.password
+      return user;
+    }
    } catch (error) {
     throw error;
    }
