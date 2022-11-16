@@ -11,6 +11,7 @@ const {
   getUserById,
   createUser,
   getUser,
+  getUserByUsername
 } = require("../../db");
 const { createFakeUser } = require("../helpers");
 
@@ -26,14 +27,13 @@ describe("DB Users", () => {
       };
 
       const user = await createUser(fakeUserData);
-     
       const queriedUser = await getUserById(user.id);
   
       expect(user.username).toBe(fakeUserData.username);
       expect(queriedUser.username).toBe(fakeUserData.username);
     });
 
-    it("EXTRA CREDIT: Does not store plaintext password in the database", async () => {
+    xit("EXTRA CREDIT: Does not store plaintext password in the database", async () => {
       const fakeUserData = {
         username: "Harry",
         password: faker.internet.password(),
@@ -43,7 +43,7 @@ describe("DB Users", () => {
       expect(queriedUser.password).not.toBe(fakeUserData.password);
     });
 
-    it("EXTRA CREDIT: Hashes the password (salted 10 times) before storing it to the database", async () => {
+    xit("EXTRA CREDIT: Hashes the password (salted 10 times) before storing it to the database", async () => {
       const fakeUserData = {
         username: "Nicky",
         password: faker.internet.password(),
@@ -73,7 +73,7 @@ describe("DB Users", () => {
       const user = await createUser(fakeUserData);
       // console.log('hello its me',user)
       expect(user.password).toBeFalsy();
-      console.log('peepoopee',)
+      console.log('hello world 2',)
     });
 
   });
@@ -120,7 +120,7 @@ describe("DB Users", () => {
   });
   describe("getUserById", () => {
 
-    it.only("Gets a user based on the user Id", async () => {
+    it("Gets a user based on the user Id", async () => {
       const fakeUser = await createFakeUser("Jacob");
       const user = await getUserById(fakeUser.id);
       expect(user).toBeTruthy();

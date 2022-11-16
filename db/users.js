@@ -12,9 +12,9 @@ async function createUser({ username, password })
       INSERT INTO users(username, password)
       VALUES ($1, $2)
       ON CONFLICT (username) DO NOTHING
-      RETURNING username;
+      RETURNING *;
       `, [username, password]);
-      console.log(user)
+      delete user.password
       return user;
     } catch (error) {
       throw error;
@@ -29,10 +29,11 @@ async function getUser({ username, password }) {
     const {rows: [user]} = await client.query(`
     SELECT id 
     FROM users
-    WHERE username=$1, password=$2
+    WHERE username=$1 password=$2
     ON CONFLICT (user) DO NOTHING
     RETURNING *;
     `, [username, password]);
+    delete user.password
     return user;
    } catch (error) {
     throw error;
@@ -54,7 +55,7 @@ try {
   WHERE id =${userId}
   `);
   
-// console.log(user,'usersss')
+// console.log(user,'users')
   return user;
 }
 catch (error) {
