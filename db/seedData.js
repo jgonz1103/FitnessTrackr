@@ -1,12 +1,13 @@
 /* eslint-disable no-useless-catch */
 // require in the database adapter functions as you write them (createUser, createActivity...)
-const {pool, createUser, getUserById, getUser, getUserByUsername, createActivity, createRoutine} = require('./');
+const {pool, createUser, getUserById, getUser, getUserByUsername, createActivity, createRoutine, getRoutinesWithoutActivities, getAllActivities, addActivityToRoutine} = require('./');
 const client = require("./client")
 
 async function dropTables() {
   try {
     console.log("Dropping All Tables...")
-   await client.query(`DROP TABLE IF EXISTS routineActivities;`)
+    await client.query(`DROP TABLE IF EXISTS routineActivities;`)
+   await client.query(`DROP TABLE IF EXISTS routine_activities;`)
    await client.query(`DROP TABLE IF EXISTS routines;`)
    await client.query(`DROP TABLE IF EXISTS activities;`)
    await client.query(`DROP TABLE IF EXISTS users;`)
@@ -47,7 +48,7 @@ async function createTables() {
     `);
 
     await client.query(`
-    CREATE TABLE routineActivities (
+    CREATE TABLE routine_activities (
       id SERIAL PRIMARY KEY,
       "activitiesId" INTEGER REFERENCES activities(id), 
       "routineId" INTEGER REFERENCES routines(id),
@@ -234,7 +235,7 @@ async function rebuildDB() {
     await createInitialUsers()
     await createInitialActivities()
     await createInitialRoutines()
-    // await createInitialRoutineActivities()
+    await createInitialRoutineActivities()
   } catch (error) {
     console.log("ERROR during rebuildDB")
     throw error
