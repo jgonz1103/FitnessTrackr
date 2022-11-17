@@ -19,7 +19,6 @@ async function getAllActivities() {
 
 async function getActivityById(id) {
   try {
-    console.log(id)
     const { rows: [ activity ]  } = await client.query(`
       SELECT * FROM activities
       WHERE id=$1;
@@ -34,14 +33,13 @@ async function getActivityById(id) {
 
 async function getActivityByName(name) {
   try {
-    const { rows: activityName } = await client.query(`
+    const {rows: [activityName]} = await client.query(`
       SELECT *
       FROM activities
       WHERE name=$1;
     `, [name]);
-    console.log(name, "M")
 
-    return
+    return activityName
 
   } catch (error) {
     throw error;
@@ -99,14 +97,13 @@ async function createActivity({
 // don't try to update the id
 // do update the name and description
 // return the updated activity
-async function updateActivity({...fields }) {
+async function updateActivity({id, ...fields }) {
 
     const setString = Object.keys(fields).map(
         (key, index) => `"${ key }"=$${ index + 1 }`
     ).join(', ');
 
     try{
-
     // if (setString.length === 0) {
     //     return;
     // }
@@ -115,10 +112,11 @@ async function updateActivity({...fields }) {
     const { rows: [ activity ] } = await client.query(`
             UPDATE activities
             SET ${ setString }
+            WHERE id=${id}
             RETURNING *;
             `, Object.values(fields));
 
-        return {rows: [ activity ]};
+        return activity
     }
 
     return await getActivityById(activityId);

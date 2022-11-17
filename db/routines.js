@@ -14,7 +14,7 @@ async function getRoutineById(id){
 }
 
 async function getRoutinesWithoutActivities(){
-  
+
 }
 
 async function getAllRoutines() {
@@ -26,6 +26,7 @@ async function getAllRoutines() {
     const routines = await Promise.all(routineIds.map(
         routine => getRoutineById( routine.id )
     ));
+    console.log(routines, "Crp")
     return routines
   } 
   catch (error) {
@@ -85,14 +86,7 @@ try{
 // }
 
 if (setString.length > 0) {
-    await client.query(`
-      UPDATE routines
-      SET ${ setString }
-      WHERE id=${ id }
-      RETURNING *;
-    `, Object.values(fields));
-    
-const { rows: [ routine ] } = await client.query(`
+    const { rows: [ routine ] } = await client.query(`
         UPDATE routines
         SET ${ setString }
         WHERE id=${ id }
