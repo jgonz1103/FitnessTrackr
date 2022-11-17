@@ -19,14 +19,12 @@ async function getRoutinesWithoutActivities(){
 
 async function getAllRoutines() {
   try {
-    const { rows: routineIds } = await client.query(`
-    SELECT id FROM routines;
+    const {rows: routines} = await client.query(`
+    SELECT * FROM routines
+    ON CONLFICT routine DO NOTHING
+    
     `)
-
-    const routines = await Promise.all(routineIds.map(
-        routine => getRoutineById( routine.id )
-    ));
-    console.log(routines, "Crp")
+   
     return routines
   } 
   catch (error) {
