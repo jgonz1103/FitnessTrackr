@@ -15,6 +15,7 @@ async function addActivityToRoutine({
       ON CONFLICT ("routineId", "activityId") DO NOTHING
       RETURNING *;
     `, [routineId, activityId, count, duration])
+    console.log(routineActivity)
   return routineActivity
 }
 
