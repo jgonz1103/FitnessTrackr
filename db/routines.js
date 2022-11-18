@@ -24,16 +24,14 @@ return allRoutines
 }
 
 async function getAllRoutines() {
-    const {rows: routines} = await client.query(`
+  const {rows: routines} = await client.query(`
    SELECT routines.*, users.username AS "creatorName"
    FROM routines
    JOIN users ON "creatorId"=users.id
-   WHERE "isPublic" = TRUE;
-    `)
-   console.log(routines,"does this work?")
+   ;`)
+   const routinesWithActivities = attachActivitiesToRoutines(routines)
 
-    return routines
-
+   return routinesWithActivities
 }
 
 async function getAllRoutinesByUser({username}) {
