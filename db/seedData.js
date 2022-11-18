@@ -41,7 +41,7 @@ async function createTables() {
       id SERIAL PRIMARY KEY,
       "creatorId" INTEGER REFERENCES users(id) NOT NULL,
       name VARCHAR(255) UNIQUE NOT NULL,
-      goal VARCHAR(255) NOT NULL,
+      goal TEXT NOT NULL,
       "isPublic" BOOLEAN DEFAULT TRUE,
       active BOOLEAN DEFAULT TRUE
     );
@@ -50,9 +50,11 @@ async function createTables() {
     await client.query(`
     CREATE TABLE routine_activities (
       id SERIAL PRIMARY KEY,
-      "activityId" INTEGER REFERENCES activities(id), 
       "routineId" INTEGER REFERENCES routines(id),
-      UNIQUE ("activitiesId", "routineId")
+      "activityId" INTEGER REFERENCES activities(id),
+      count INTEGER,
+      duration INTEGER,
+      UNIQUE ("routineId", "activityId")
     );
     `);
 
