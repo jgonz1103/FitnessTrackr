@@ -1,6 +1,12 @@
 const client = require('./client')
 
 async function getRoutineActivityById(id){
+  const {rows: [routineActivity]} = await client.query(`
+  SELECT *
+  FROM routine_activities
+  WHERE id=${id};
+  `)
+  return routineActivity
 }
 
 async function addActivityToRoutine({
@@ -20,15 +26,45 @@ async function addActivityToRoutine({
 }
 
 async function getRoutineActivitiesByRoutine({id}) {
+  const {rows: routineActivities}= await client.query(`
+  SELECT *
+  FROM routine_activities
+  WHERE "routineId"=${id};
+  `)
+  return routineActivities
 }
 
 async function updateRoutineActivity ({id, ...fields}) {
+  const setString = Object.keys(fields).map((element, index)=> `"${element}"=$${index + 1}`).join(',')
+
+  const {rows: [updatedRoutineActivity]} = await client.query(`
+  UPDATE routine_activities
+  SET ${setString}
+  WHERE id=${id}
+  RETURNING *;
+  `, Object.values(fields))
+
+  return updatedRoutineActivity
 }
 
 async function destroyRoutineActivity(id) {
+  const {rows: [deletedRoutineActivity]} = await client.query(`
+  DELETE FROM routine_activities
+  WHERE id=${id}
+  RETURNING *
+  ;`)
+
+  return deletedRoutineActivity
 }
 
 async function canEditRoutineActivity(routineActivityId, userId) {
+  const {rows: [checkedRoutineActivity]} = await client.query(`
+  SELECT "creatorId"
+  FROM routines
+  WHERE id IN (SELECT "routineId" FROM routine_activities WHERE id=${routineActivityId})
+  ;`)
+
+  return checkedRoutineActivity.creatorId === userId
 }
 
 module.exports = {
